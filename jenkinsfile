@@ -8,6 +8,7 @@ pipeline {
     registry="chsai9319/sai-urlshort"
     registryCredential='dockerid'
     }
+    stages{
         stage("Build"){
         steps{
         git branch: 'main', credentialsId: '2cf1742a-c06b-468d-aed9-f1aece323912', url: 'https://github.com/chsai9319/django_url_shortner.git'
@@ -54,7 +55,7 @@ pipeline {
         stage('Terminate Stage'){
              steps{
                 echo "Pipeline Terminated successfully!"
-    }
-    }
+ }
+ }
 }
 }
