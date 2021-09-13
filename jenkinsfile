@@ -1,0 +1,83 @@
+
+  
+pipeline {
+    agent any
+    
+    environment{
+    dockerimage=''
+    registry="chsai9319/sai-urlshort"
+    registryCredential='dockerid'
+    }
+    stages {
+        stage('Build'){
+        steps{
+            git branch: 'main', credentialsId: '2cf1742a-c06b-468d-aed9-f1aece323912', url: 'https://github.com/chsai9319/sai-urlshort.git'
+            }
+            }
+        stage('Compiling Stage'){
+            steps{
+                echo "Pipeline Started Successfully"
+               
+                echo "Compilation done successfully!"
+            }
+        }
+        stage('Testing Stage'){
+            steps{
+                echo "Entered Testing Stage"
+                bat 'python test.py'
+             
+                echo "Unit Test done successfully!"
+            }
+        }
+
+        stage('Final Confirmation'){
+                    steps{
+                        echo "Entered Confirmation Stage"
+                        bat 'python run_tests.py'
+                        echo "That is the result of testing"
+                    }
+                }
+           stage('Building Docker Image'){
+            steps{
+                echo "Building Docker Image"
+                bat 'docker image build -t sai-urlshort .'
+                echo "Image Built Successfully"
+            }
+        }
+        
+        stage('Stop previous containers') {
+                     steps {
+                         echo "Stopping Previous Containers"
+                         powershell 'docker stop $(docker ps -a -q)'
+                         powershell 'docker rm $(docker ps -q -f status=exited)'
+                         echo "Previous Containers Stopped"
+                           }
+                     }
+        
+                    
+         
+        stage('Running Docker Image'){
+                    steps{
+                        echo "Runningg Docker Image"
+                        bat 'docker run -p 5000:5000 -d sai-urlshort'
+                        echo "Image Ran Successfully"
+                    }
+                    }
+      
+        stage('Removing Untagged Images') {
+                             steps {
+                                 echo "Removing Untagged Images"
+                                 powershell 'docker images -f "dangling=true"'
+                                 powershell 'docker rmi $(docker images -f "dangling=true" -q) --force'
+                                 echo "Untagged Images Removed"
+                                    }
+                             }
+         
+
+        stage('Terminate Stage'){
+             steps{
+                echo "Pipeline Terminated successfully!"
+    }
+    }
+}
+}
