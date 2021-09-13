@@ -21,26 +21,11 @@ pipeline {
                 echo "Compilation done successfully!"
             }
         }
-        stage('Testing Stage'){
-            steps{
-                echo "Entered Testing Stage"
-                bat 'python test.py'
-             
-                echo "Unit Test done successfully!"
-            }
-        }
-
-        stage('Final Confirmation'){
-                    steps{
-                        echo "Entered Confirmation Stage"
-                        bat 'python run_tests.py'
-                        echo "That is the result of testing"
-                    }
-                }
+        
            stage('Building Docker Image'){
             steps{
                 echo "Building Docker Image"
-                bat 'docker image build -t sai-urlshort .'
+                bat 'docker image build -t django_url_shortner .'
                 echo "Image Built Successfully"
             }
         }
@@ -59,7 +44,7 @@ pipeline {
         stage('Running Docker Image'){
                     steps{
                         echo "Runningg Docker Image"
-                        bat 'docker run -p 5000:5000 -d sai-urlshort'
+                        bat 'docker run -p 5000:5000 -d django_url_shortner'
                         echo "Image Ran Successfully"
                     }
                     }
